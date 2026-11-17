@@ -1,0 +1,270 @@
+[gd_scene format=3 uid="uid://cii0dnavv6p28"]
+
+[ext_resource type="Script" uid="uid://dcmwk5kk15e21" path="res://scripts/game_manager.gd" id="1_gm"]
+[ext_resource type="Script" uid="uid://u1171xi0eacb" path="res://scripts/paddle_controller.gd" id="2_pc"]
+[ext_resource type="Script" uid="uid://daqcj5srbpmgv" path="res://scripts/ball_controller.gd" id="3_bc"]
+[ext_resource type="Script" uid="uid://diwvqtjwguamg" path="res://scripts/score_manager.gd" id="4_sm"]
+[ext_resource type="Script" uid="uid://d3tb2k70fec3g" path="res://scripts/goal_zone.gd" id="5_gz"]
+[ext_resource type="Script" uid="uid://go5weofwpum7" path="res://scripts/ui_manager.gd" id="6_ui"]
+[ext_resource type="Script" uid="uid://odhrrcd68qmg" path="res://scripts/divider.gd" id="7_dv"]
+[ext_resource type="PackedScene" uid="uid://bdt6t6xqije5w" path="res://assets/models/bastao.glb" id="8_bastao"]
+[ext_resource type="Script" path="res://audio/cozy_music.gd" id="9_kek77"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
+sky_top_color = Color(0.25, 0.2, 0.2, 1)
+sky_horizon_color = Color(0.75, 0.58, 0.42, 1)
+ground_bottom_color = Color(0.05, 0.03, 0.03, 1)
+ground_horizon_color = Color(0.45, 0.33, 0.27, 1)
+
+[sub_resource type="Sky" id="Sky"]
+sky_material = SubResource("SkyMat")
+
+[sub_resource type="Environment" id="Env"]
+background_mode = 1
+background_color = Color(0.02, 0.01, 0.015, 1)
+sky = SubResource("Sky")
+ambient_light_source = 3
+ambient_light_energy = 0.7
+reflected_light_source = 2
+tonemap_mode = 3
+glow_enabled = true
+glow_intensity = 0.5
+
+[sub_resource type="StandardMaterial3D" id="MatFloor"]
+albedo_color = Color(0.03, 0.03, 0.05, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+material = SubResource("MatFloor")
+size = Vector3(18.6, 10.2, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="MatWhite"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.7
+
+[sub_resource type="BoxMesh" id="WallMesh"]
+material = SubResource("MatWhite")
+size = Vector3(17.4, 0.4, 0.8)
+
+[sub_resource type="BoxShape3D" id="GoalShape"]
+size = Vector3(0.6, 9, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5vw27"]
+albedo_color = Color(0.8509804, 0.2509804, 0.050980393, 1)
+emission_enabled = true
+emission = Color(1, 0.3019608, 0, 1)
+emission_energy_multiplier = 0.9
+
+[sub_resource type="StandardMaterial3D" id="MatGoal"]
+albedo_color = Color(1, 0.35, 0.05, 1)
+emission_enabled = true
+emission = Color(1, 0.3, 0, 1)
+emission_energy_multiplier = 1.8
+
+[sub_resource type="BoxMesh" id="GoalMesh"]
+material = SubResource("MatGoal")
+size = Vector3(0.6, 9.4, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kek77"]
+albedo_color = Color(0.8509804, 0.2509804, 0.050980393, 1)
+emission_enabled = true
+emission = Color(1, 0.3019608, 0, 1)
+emission_energy_multiplier = 0.9
+
+[sub_resource type="SphereShape3D" id="BallShape"]
+radius = 0.25
+
+[sub_resource type="StandardMaterial3D" id="MatBall"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 1.2
+
+[sub_resource type="SphereMesh" id="BallMesh"]
+material = SubResource("MatBall")
+radius = 0.25
+height = 0.5
+
+[node name="Main" type="Node3D" unique_id=380692203]
+script = ExtResource("1_gm")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1003428793]
+environment = SubResource("Env")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=2145088788]
+transform = Transform3D(0.94, 0.19, -0.28, 0, 0.82, 0.57, 0.34, -0.53, 0.77, 0, 6, 8)
+light_energy = 1.3
+shadow_enabled = true
+
+[node name="GoldLight" type="OmniLight3D" parent="." unique_id=1937823878]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 6)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 2.0
+omni_range = 25.0
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1949871286]
+transform = Transform3D(1, 0, 0, 0, 0.99, 0.139, 0, -0.139, 0.99, 0, 1.8, 12.5)
+current = true
+fov = 48.0
+
+[node name="Arena" type="Node3D" parent="." unique_id=874596289]
+
+[node name="Floor" type="MeshInstance3D" parent="Arena" unique_id=984819395]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.6)
+mesh = SubResource("FloorMesh")
+
+[node name="WallTop" type="MeshInstance3D" parent="Arena" unique_id=873715257]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.7, 0)
+mesh = SubResource("WallMesh")
+
+[node name="WallBottom" type="MeshInstance3D" parent="Arena" unique_id=925159627]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.7, 0)
+mesh = SubResource("WallMesh")
+
+[node name="Divider" type="Node3D" parent="Arena" unique_id=1808239435]
+script = ExtResource("7_dv")
+
+[node name="GoalLeft" type="Area3D" parent="Arena" unique_id=1591782735]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.4, 0, 0)
+script = ExtResource("5_gz")
+
+[node name="Shape" type="CollisionShape3D" parent="Arena/GoalLeft" unique_id=1968416726]
+shape = SubResource("GoalShape")
+
+[node name="Panel" type="MeshInstance3D" parent="Arena/GoalLeft" unique_id=1988069543]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.4, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_5vw27")
+mesh = SubResource("GoalMesh")
+
+[node name="Label" type="Label3D" parent="Arena/GoalLeft" unique_id=1636126552]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.2)
+pixel_size = 0.012
+modulate = Color(1, 0.9, 0.5, 1)
+text = "G
+O
+A
+L"
+font_size = 120
+
+[node name="GoalRight" type="Area3D" parent="Arena" unique_id=1417994956]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.4, 0, 0)
+script = ExtResource("5_gz")
+side = "right"
+
+[node name="Shape" type="CollisionShape3D" parent="Arena/GoalRight" unique_id=1045206887]
+shape = SubResource("GoalShape")
+
+[node name="Panel" type="MeshInstance3D" parent="Arena/GoalRight" unique_id=611739867]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.4, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_kek77")
+mesh = SubResource("GoalMesh")
+
+[node name="Label" type="Label3D" parent="Arena/GoalRight" unique_id=503413681]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.2)
+pixel_size = 0.012
+modulate = Color(1, 0.9, 0.5, 1)
+text = "G
+O
+A
+L"
+font_size = 120
+
+[node name="PaddleLeft" type="Node3D" parent="." unique_id=1990595510]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 0)
+script = ExtResource("2_pc")
+half_size = Vector2(0.25, 1.25)
+
+[node name="Model" parent="PaddleLeft" unique_id=114152186 instance=ExtResource("8_bastao")]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, -1.28, 0)
+
+[node name="PaddleRight" type="Node3D" parent="." unique_id=2123835433]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0)
+script = ExtResource("2_pc")
+is_left = false
+half_size = Vector2(0.25, 1.25)
+
+[node name="Model" parent="PaddleRight" unique_id=1074296304 instance=ExtResource("8_bastao")]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, -1.28, 0)
+
+[node name="Ball" type="Area3D" parent="." unique_id=597858503]
+script = ExtResource("3_bc")
+
+[node name="Shape" type="CollisionShape3D" parent="Ball" unique_id=1311270837]
+shape = SubResource("BallShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="Ball" unique_id=23843717]
+mesh = SubResource("BallMesh")
+
+[node name="ScoreManager" type="Node" parent="." unique_id=148228769]
+script = ExtResource("4_sm")
+
+[node name="UIManager" type="CanvasLayer" parent="." unique_id=1547899659]
+script = ExtResource("6_ui")
+
+[node name="ScoreLeft" type="Label" parent="UIManager" unique_id=1896163836]
+anchors_preset = -1
+anchor_left = 0.25
+anchor_right = 0.25
+offset_left = -100.0
+offset_top = 16.0
+offset_right = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.3, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 64
+text = "0"
+horizontal_alignment = 1
+
+[node name="ScoreRight" type="Label" parent="UIManager" unique_id=1673815009]
+anchors_preset = -1
+anchor_left = 0.75
+anchor_right = 0.75
+offset_left = -100.0
+offset_top = 16.0
+offset_right = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.3, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 64
+text = "0"
+horizontal_alignment = 1
+
+[node name="Message" type="Label" parent="UIManager" unique_id=1568630771]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -80.0
+offset_right = 400.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 40
+text = "PONG 3D"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hint" type="Label" parent="UIManager" unique_id=995575819]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -44.0
+offset_right = 400.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
+theme_override_font_sizes/font_size = 18
+text = "Jogador 1: W / S    |    Jogador 2: ↑ / ↓    |    Primeiro a 11 pontos vence"
+horizontal_alignment = 1
+
+[node name="CozyMusic" type="AudioStreamPlayer" parent="." unique_id=937186391]
+script = ExtResource("9_kek77")
